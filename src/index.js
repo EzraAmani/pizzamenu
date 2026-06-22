@@ -71,11 +71,23 @@ function Menu() {
       {/* we use the ternary operator to check if the menu is available */}
       {/* in the js mode we can only write something that produces a value and an if statement does not produce a value */}
       {numPizzas > 0 ? (
-        <ul className="pizzas">
-          {pizzaData.map((pizza) => (
-            <Pizza pizzaObj={pizza} key={pizza.name} />
-          ))}
-        </ul>
+        //this is a react fragment
+        //react fragments allow us to have more than one element in jsx
+        <>
+          <p>
+            Authentic Italian cuisine. 6 creative dishes to chose from. All from
+            our stone oven, all organic, all delicious.
+          </p>
+          //here we create one pizza component and pass many pizza objects into
+          that component using props //props can only be passed from parents to
+          children not the other way round //we render multiple components of
+          the same type by looping over the array thus creating a list
+          <ul className="pizzas">
+            {pizzaData.map((pizza) => (
+              <Pizza pizzaObj={pizza} key={pizza.name} />
+            ))}
+          </ul>
+        </>
       ) : (
         <p>We're still working on our menu. Please come back later</p>
       )}
@@ -96,16 +108,17 @@ function Menu() {
   );
 }
 
-function Pizza(props) {
-  console.log(props);
-  if (props.pizzaObj.soldOut) return null;
+//we attempt prop destructing here
+function Pizza({ pizzaObj }) {
+  console.log(pizzaObj);
+  // if (pizzaObj.soldOut) return null;
   return (
-    <li className="pizza">
-      <img src={props.pizzaObj.photoName} alt={props.pizzaObj.name}></img>
+    <li className={`pizza ${pizzaObj.soldOut ? "sold-out" : ""}`}>
+      <img src={pizzaObj.photoName} alt={pizzaObj.name}></img>
       <div>
-        <h3>{props.pizzaObj.name}</h3>
-        <p>{props.pizzaObj.ingredients}</p>
-        <span>{props.pizzaObj.price}</span>
+        <h3>{pizzaObj.name}</h3>
+        <p>{pizzaObj.ingredients}</p>
+        <span>{pizzaObj.soldOut ? "SOLD OUT" : pizzaObj.price}</span>
       </div>
     </li>
   );
@@ -130,12 +143,7 @@ function Footer() {
       {/* this is conditional rendering with ternaries */}
       <footer className="footer">
         {isOpen ? (
-          <div className="order">
-            <p>
-              We're open until {closeHour}:00. Come visit us or order online.
-            </p>
-            <button className="btn">Order</button>
-          </div>
+          <Order closeHour={closeHour} openHour={openHour} />
         ) : (
           <p>
             We're currently closed but happy to welcome you between 0{openHour}
@@ -143,6 +151,18 @@ function Footer() {
           </p>
         )}
       </footer>
+    </div>
+  );
+}
+//props destructing in action too
+function Order({ closeHour, openHour }) {
+  return (
+    <div className="order">
+      <p>
+        We're open from 0{openHour}:00Hrs to {closeHour}:00Hrs. Come visit us or
+        order online.
+      </p>
+      <button className="btn">Order</button>
     </div>
   );
 }
